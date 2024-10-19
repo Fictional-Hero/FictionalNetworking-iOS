@@ -5,33 +5,22 @@
 // All protocols should move to a Core Module.
 // This module will only have the concrets.
 
-public protocol FictionalNetworking {
-    func fetch(requestURL: String) async throws -> Data
-//    func fetch<T>(requestURL: String) -> T
-}
-
 import Foundation
 
-class ConcreteFictionalNetworking: FictionalNetworking {
-    private let downloader: any HTTPDataDownloader
+public class ConcreteFictionalNetworking {
     
-    init(downloader: any HTTPDataDownloader = URLSession.shared) {
-        self.downloader = downloader
+    public init() {
+        usingURLSession()
     }
     
-    private lazy var decoder: JSONDecoder = {
-        let aDecoder = JSONDecoder()
-        aDecoder.dateDecodingStrategy = .millisecondsSince1970
-        return aDecoder
-    }()
-    
-    func fetch(requestURL: String) async throws -> Data {
-        do {
-            let response = try await downloader.httpData(from: URL(fileURLWithPath: requestURL))
-            return response
-        } catch {
-            throw ErrorNetwork()
+    func usingURLSession() {
+        let session = URLSession(configuration: .ephemeral)
+        let url = URL(string: "https://www.google.com")!
+        let urlResuest = URLRequest(url: url)
+        let sessionReq = session.dataTask(with: urlResuest) { data,response,error  in
+            print(response)
         }
+        sessionReq.resume()
     }
 }
 
@@ -43,7 +32,7 @@ public protocol FictionalNetworkToken {
     func genToken() -> String
 }
 
-
+//class URLSessionConfig: URLSessionConfiguration
 
 
 
